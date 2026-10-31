@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cẩm Nang Tân Sinh Viên - Nền Tảng Hỗ Trợ Sinh Viên Đại Học Việt Nam</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        },
+                        brand: {
+                            blue: '#0284c7',
+                            light: '#e0f2fe',
+                            amber: '#d97706',
+                            gold: '#f59e0b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased smooth-scroll flex flex-col min-h-screen">
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-40 bg-navy-900/95 backdrop-blur border-b border-slate-800 text-white transition-all shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-brand-blue to-blue-400 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-sky-950 group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <span class="font-heading text-2xl font-bold tracking-tight block text-white leading-none">TÂN SINH VIÊN</span>
+                        <span class="text-xs text-brand-amber font-medium tracking-wide">CẨM NANG TOÀN DIỆN</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation Menu -->
+                <nav class="hidden md:flex items-center space-x-1 lg:space-x-3">
+                    <a href="#home" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 hover:text-sky-400 transition-colors">Trang chủ</a>
+                    <a href="#checklist" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 hover:text-sky-400 transition-colors">Checklist</a>
+                    <a href="#budget" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 hover:text-sky-400 transition-colors">Tính Chi Phí</a>
+                    <a href="#planner" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 hover:text-sky-400 transition-colors">Lịch & Tasks</a>
+                    <a href="#handbook" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 hover:text-sky-400 transition-colors">Cẩm Nang</a>
+                    <a href="#faq" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 hover:text-sky-400 transition-colors">Hỏi Đáp</a>
+                    <a href="#contact" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 hover:text-sky-400 transition-colors">Liên hệ</a>
+                </nav>
+
+                <!-- Search & School Select -->
+                <div class="hidden lg:flex items-center gap-3">
+                    <button onclick="openSearchModal()" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm px-3.5 py-2 rounded-lg border border-slate-700 transition-colors">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        <span>Tìm kiếm...</span>
+                        <kbd class="text-[10px] bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">⌘K</kbd>
+                    </button>
+                    
+                    <div class="relative">
+                        <select id="university-select" onchange="handleUniversityChange(this.value)" class="bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-3 py-2 pr-7 appearance-none focus:outline-none focus:border-brand-blue cursor-pointer">
+                            <option value="all">🏫 Tất cả các trường (Hướng dẫn chung)</option>
+                            <option value="rmit">Đại học RMIT Việt Nam</option>
+                            <option value="vnu">Đại học Quốc gia Hà Nội (VNU)</option>
+                            <option value="vnuhcm">Đại học Quốc gia TP.HCM (VNU-HCM)</option>
+                            <option value="hust">ĐH Bách Khoa Hà Nội</option>
+                            <option value="neu">ĐH Kinh tế Quốc dân (NEU)</option>
+                            <option value="ueh">ĐH Kinh tế TP.HCM (UEH)</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center gap-2">
+                    <button onclick="openSearchModal()" class="p-2 text-slate-300 hover:text-white">
+                        <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                    </button>
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800 bg-navy-950 px-4 pt-3 pb-6 space-y-2">
+            <div class="mb-3">
+                <label class="text-xs text-slate-400 mb-1 block">Chọn trường đại học của bạn:</label>
+                <select onchange="handleUniversityChange(this.value)" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-3 py-2">
+                    <option value="all">🏫 Tất cả các trường (Hướng dẫn chung)</option>
+                    <option value="rmit">Đại học RMIT Việt Nam</option>
+                    <option value="vnu">Đại học Quốc gia Hà Nội</option>
+                    <option value="vnuhcm">Đại học Quốc gia TP.HCM</option>
+                    <option value="hust">ĐH Bách Khoa Hà Nội</option>
+                    <option value="neu">ĐH Kinh tế Quốc dân</option>
+                    <option value="ueh">ĐH Kinh tế TP.HCM</option>
+                </select>
+            </div>
+            <a href="#home" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800">Trang chủ</a>
+            <a href="#checklist" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800">Checklist Nhập học</a>
+            <a href="#budget" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800">Công cụ Chi phí</a>
+            <a href="#planner" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800">Lịch & Deadline</a>
+            <a href="#handbook" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800">Cẩm nang Kiến thức</a>
+            <a href="#faq" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800">Hỏi & Đáp</a>
+            <a href="#contact" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800">Liên hệ & Hỗ trợ</a>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow">
+
+        <!-- SECTION 1: HERO BANNER -->
+        <section id="home" class="relative bg-gradient-to-b from-navy-900 via-navy-800 to-slate-900 text-white overflow-hidden py-16 md:py-24">
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#0284c7_1px,transparent_1px)] [background-size:16px_16px]"></div>
+            
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid md:grid-cols-12 gap-12 items-center">
+                    <div class="md:col-span-7 space-y-6 text-center md:text-left">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-400/30 text-sky-300 text-xs font-semibold uppercase tracking-wide">
+                            <span class="w-2 h-2 rounded-full bg-brand-amber animate-ping"></span>
+                            Sản phẩm Thử thách Vibe Coding 2026 (Bộ GD&ĐT & ĐH RMIT)
+                        </div>
+                        <h1 class="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight">
+                            Hành Trang Vững Vàng Cho <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-blue-300 to-amber-300">Tân Sinh Viên Việt Nam</span>
+                        </h1>
+                        <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl">
+                            Nền tảng kỹ thuật số hỗ trợ tân sinh viên chủ động làm thủ tục nhập học, quản lý ngân sách sinh hoạt, lên lịch học tín chỉ và tự tin hòa nhập môi trường đại học.
+                        </p>
+
+                        <!-- Banner Info Notice -->
+                        <div id="university-notice-banner" class="bg-slate-800/80 border border-slate-700 p-4 rounded-xl flex items-start gap-3 text-left">
+                            <i class="fa-solid fa-circle-info text-brand-blue text-xl mt-0.5"></i>
+                            <div class="text-xs text-slate-300 space-y-1">
+                                <p class="font-semibold text-slate-100" id="current-scope-title">Phạm vi hiện tại: Hướng dẫn chung toàn quốc</p>
+                                <p id="current-scope-desc">Các hướng dẫn mang tính chất tham khảo chung. Khi có thông báo từ trường của bạn, hãy luôn đối chiếu với cổng thông tin chính thức của trường.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-2">
+                            <a href="#checklist" class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-brand-blue to-sky-600 text-white font-semibold shadow-lg shadow-sky-900/40 hover:brightness-110 transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-list-check"></i>
+                                Bắt đầu Check-list nhập học
+                            </a>
+                            <a href="#budget" class="px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-calculator text-brand-amber"></i>
+                                Tính chi phí sinh hoạt
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Visual Hero Graphic featuring REAL Vietnamese Students Image -->
+                    <div class="md:col-span-5">
+                        <div class="relative mx-auto max-w-md">
+                            <div class="absolute -inset-1 rounded-2xl bg-gradient-to-r from-brand-blue to-brand-amber opacity-30 blur-xl"></div>
+                            <div class="relative bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+                                <div class="h-64 overflow-hidden relative">
+                                    <img src="images/hero_hoi_truong.png" alt="Sinh viên Việt Nam trong hội trường đại học" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                                    <span class="absolute bottom-3 left-4 text-xs font-bold bg-brand-amber text-slate-950 px-2.5 py-1 rounded-md shadow">100% Sinh viên Việt Nam</span>
+                                </div>
+                                <div class="p-5 space-y-3">
+                                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                        <i class="fa-solid fa-flag text-rose-500"></i> Khát vọng Sinh viên Việt Nam
+                                    </h3>
+                                    <p class="text-xs text-slate-300 leading-relaxed">
+                                        Hào hứng, năng động và tự tin bước vào giảng đường Đại học với sự chuẩn bị kỹ lưỡng về thủ tục và kỹ năng sống.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: CHECKLIST NHẬP HỌC (Interactive Tool #1) -->
+        <section id="checklist" class="py-16 bg-white border-b border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="text-brand-blue font-semibold text-xs tracking-widest uppercase bg-sky-50 px-3 py-1 rounded-full border border-sky-100">Công cụ #1</span>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-navy-900 mt-2">Checklist Nhập Học Sinh Viên</h2>
+                    <p class="text-slate-600 mt-2 text-sm sm:text-base">Theo dõi tiến độ chuẩn bị giấy tờ, hồ sơ và các việc cần làm trước và sau khi bước vào giảng đường.</p>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+                    <!-- Progress Header -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-200">
+                        <div>
+                            <h3 class="text-lg font-bold text-navy-900">Tiến độ hoàn thành của bạn</h3>
+                            <p class="text-xs text-slate-500">Tự động lưu vào trình duyệt (LocalStorage)</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="text-right">
+                                <span id="checklist-count" class="text-2xl font-bold text-brand-blue">0/0</span>
+                                <span class="text-xs text-slate-500 block">công việc</span>
+                            </div>
+                            <button onclick="resetChecklist()" class="text-xs text-slate-500 hover:text-red-600 flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-200 rounded-lg hover:border-red-200 transition-colors">
+                                <i class="fa-solid fa-rotate-left"></i> Đặt lại
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden mb-8">
+                        <div id="checklist-progress-bar" class="bg-gradient-to-r from-brand-blue to-emerald-500 h-full w-0 transition-all duration-500"></div>
+                    </div>
+
+                    <!-- Filter Tabs & Add Custom Task -->
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+                        <div class="flex flex-wrap gap-2" id="checklist-category-tabs">
+                            <button onclick="filterChecklist('all')" class="checklist-tab active px-4 py-2 rounded-lg text-xs font-semibold bg-navy-900 text-white transition-colors">Tất cả</button>
+                            <button onclick="filterChecklist('truoc')" class="checklist-tab px-4 py-2 rounded-lg text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 transition-colors">Trước khi đi học</button>
+                            <button onclick="filterChecklist('ngay')" class="checklist-tab px-4 py-2 rounded-lg text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 transition-colors">Ngày làm thủ tục</button>
+                            <button onclick="filterChecklist('tuan')" class="checklist-tab px-4 py-2 rounded-lg text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 transition-colors">Tuần đầu tiên</button>
+                        </div>
+
+                        <!-- Add Custom Task Form -->
+                        <form onsubmit="addCustomChecklistItem(event)" class="flex items-center gap-2">
+                            <input type="text" id="custom-task-input" placeholder="+ Thêm công việc cá nhân..." required class="text-xs px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-brand-blue w-60">
+                            <button type="submit" class="bg-brand-blue hover:bg-sky-600 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">Thêm</button>
+                        </form>
+                    </div>
+
+                    <!-- Checklist Items List -->
+                    <div id="checklist-items-container" class="space-y-3">
+                        <!-- JS Rendered -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: ƯỚC TÍNH CHI PHÍ SINH HOẠT (Interactive Tool #2) -->
+        <section id="budget" class="py-16 bg-slate-900 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="text-brand-amber font-semibold text-xs tracking-widest uppercase bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">Công cụ #2</span>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-white mt-2">Ước Tính Chi Phí Sinh Hoạt</h2>
+                    <p class="text-slate-400 mt-2 text-sm sm:text-base">Lập ngân sách hàng tháng giúp bạn chủ động tài chính, không lo "cháy túi" cuối tháng.</p>
+                </div>
+
+                <div class="grid lg:grid-cols-12 gap-8 items-start">
+                    <!-- Calculator Inputs -->
+                    <div class="lg:col-span-7 bg-slate-800 border border-slate-700 rounded-2xl p-6 sm:p-8 space-y-5">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2 border-b border-slate-700 pb-3">
+                            <i class="fa-solid fa-sliders text-brand-blue"></i> Nhập Ngân Sách & Khoản Chi Dự Kiến
+                        </h3>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Ngân sách hàng tháng của bạn (VNĐ):</label>
+                            <div class="relative">
+                                <input type="number" id="budget-income" value="4000000" min="0" oninput="calculateBudget()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white font-semibold text-base focus:outline-none focus:border-brand-blue">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400">VNĐ</span>
+                            </div>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-slate-300 mb-1">Tiền nhà / KTX:</label>
+                                <div class="relative">
+                                    <input type="number" id="budget-housing" value="1500000" min="0" oninput="calculateBudget()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-blue">
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">VNĐ</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-300 mb-1">Ăn uống:</label>
+                                <div class="relative">
+                                    <input type="number" id="budget-food" value="1800000" min="0" oninput="calculateBudget()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-blue">
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">VNĐ</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-300 mb-1">Đi lại (Xăng/Xe bus):</label>
+                                <div class="relative">
+                                    <input type="number" id="budget-transport" value="300000" min="0" oninput="calculateBudget()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-blue">
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">VNĐ</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-300 mb-1">Học tập & Sách vở:</label>
+                                <div class="relative">
+                                    <input type="number" id="budget-study" value="200000" min="0" oninput="calculateBudget()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-blue">
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">VNĐ</span>
+                                </div>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs text-slate-300 mb-1">Chi phí khác (Giải trí, Điện thoại, Internet...):</label>
+                                <div class="relative">
+                                    <input type="number" id="budget-other" value="400000" min="0" oninput="calculateBudget()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-blue">
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">VNĐ</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="text-[11px] text-slate-400 italic">* Lưu ý: Các con số do người dùng tự nhập tùy theo hoàn cảnh cá nhân và thành phố sinh sống.</p>
+                    </div>
+
+                    <!-- Calculator Summary & Status Badge -->
+                    <div class="lg:col-span-5 bg-slate-800 border border-slate-700 rounded-2xl p-6 sm:p-8 space-y-6">
+                        <h3 class="text-lg font-bold text-white border-b border-slate-700 pb-3">Tổng Quan Ngân Sách</h3>
+
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-slate-400">Ngân sách hàng tháng:</span>
+                                <span id="summary-income" class="font-semibold text-white">0 VNĐ</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-slate-400">Tổng chi phí dự kiến:</span>
+                                <span id="summary-total-expense" class="font-semibold text-brand-amber">0 VNĐ</span>
+                            </div>
+                            <div class="border-t border-slate-700 pt-3 flex justify-between items-center text-base font-bold">
+                                <span>Số tiền dư / thâm hụt:</span>
+                                <span id="summary-balance" class="text-emerald-400">0 VNĐ</span>
+                            </div>
+                        </div>
+
+                        <div id="budget-status-box" class="p-4 rounded-xl border bg-slate-900 text-xs space-y-2">
+                            <div class="flex items-center gap-2 font-bold text-sm" id="budget-status-title">
+                                <!-- Dynamic Title -->
+                            </div>
+                            <p class="text-slate-300 leading-relaxed" id="budget-status-desc">
+                                <!-- Dynamic Description -->
+                            </p>
+                        </div>
+
+                        <div class="space-y-2 text-xs" id="budget-breakdown">
+                            <!-- Rendered JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: SỔ TASK & LỊCH HỌC TÍN CHỈ (Interactive Tool #3) -->
+        <section id="planner" class="py-16 bg-white border-b border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="text-brand-blue font-semibold text-xs tracking-widest uppercase bg-sky-50 px-3 py-1 rounded-full border border-sky-100">Công cụ #3</span>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-navy-900 mt-2">Quản Lý Thời Gian & Deadline</h2>
+                    <p class="text-slate-600 mt-2 text-sm sm:text-base">Không còn nỗi lo trễ hạn nộp bài tập tín chỉ hay lịch thi đại học.</p>
+                </div>
+
+                <div class="grid lg:grid-cols-12 gap-8">
+                    <!-- Form Create Task -->
+                    <div class="lg:col-span-4 bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm">
+                        <h3 class="text-base font-bold text-navy-900 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-plus-circle text-brand-blue"></i> Thêm Công Việc / Deadline
+                        </h3>
+                        <form onsubmit="handleAddTask(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tên công việc / Môn học *</label>
+                                <input type="text" id="task-title" placeholder="VD: Nộp BTVN Triết học Mác-Lênin" required class="w-full text-xs px-3 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-brand-blue">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Hạn hoàn thành (Deadline) *</label>
+                                <input type="date" id="task-date" required class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-brand-blue">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Mức độ ưu tiên</label>
+                                <select id="task-priority" class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-brand-blue">
+                                    <option value="high">🔴 Cao (Nóng / Bài kiểm tra)</option>
+                                    <option value="medium" selected>🟡 Trung bình (BTVN / Thảo luận)</option>
+                                    <option value="low">🟢 Thấp (Xem trước tài liệu)</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="w-full bg-navy-900 hover:bg-slate-800 text-white font-semibold text-xs py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-floppy-disk"></i> Lưu Công Việc
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Task List & Filters -->
+                    <div class="lg:col-span-8 bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                            <h3 class="text-base font-bold text-navy-900">Danh Sách Công Việc</h3>
+                            <div class="flex items-center gap-2">
+                                <select id="task-filter" onchange="renderTasks()" class="text-xs border border-slate-300 rounded-lg px-3 py-1.5 bg-white">
+                                    <option value="all">Tất cả công việc</option>
+                                    <option value="pending">Đang thực hiện</option>
+                                    <option value="completed">Đã hoàn thành</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="tasks-container" class="space-y-3 flex-grow min-h-[200px]">
+                            <!-- JS Rendered Tasks -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: CẨM NANG TRI THỨC (Với hình ảnh Sinh Viên Việt Nam) -->
+        <section id="handbook" class="py-16 bg-slate-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="text-brand-blue font-semibold text-xs tracking-widest uppercase bg-sky-100 px-3 py-1 rounded-full text-sky-800">Cẩm Nang Tri Thức</span>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-navy-900 mt-2">Hướng Dẫn Chi Tiết Cho Tân Sinh Viên</h2>
+                    <p class="text-slate-600 mt-2 text-sm sm:text-base">Các bài viết phân tích kỹ lưỡng các vấn đề cốt lõi giúp bạn tự tin làm chủ môi trường đại học.</p>
+                </div>
+
+                <!-- Category Tabs -->
+                <div class="flex flex-wrap justify-center gap-2 mb-10" id="handbook-tabs">
+                    <button onclick="filterHandbook('all')" class="handbook-btn active px-4 py-2 rounded-full text-xs font-semibold bg-navy-900 text-white shadow-sm">Tất cả bài viết</button>
+                    <button onclick="filterHandbook('hocvu')" class="handbook-btn px-4 py-2 rounded-full text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-200">Học vụ & Tín chỉ</button>
+                    <button onclick="filterHandbook('nhaphoc')" class="handbook-btn px-4 py-2 rounded-full text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-200">Thủ tục & Hồ sơ</button>
+                    <button onclick="filterHandbook('hocbong')" class="handbook-btn px-4 py-2 rounded-full text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-200">Học bổng & Hỗ trợ</button>
+                    <button onclick="filterHandbook('doisong')" class="handbook-btn px-4 py-2 rounded-full text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-200">KTX & Thuê nhà</button>
+                    <button onclick="filterHandbook('kynang')" class="handbook-btn px-4 py-2 rounded-full text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-200">Kỹ năng sống</button>
+                </div>
+
+                <!-- Articles Grid (JS Rendered) -->
+                <div id="articles-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cards Rendered via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: HỎI ĐÁP FAQ -->
+        <section id="faq" class="py-16 bg-white border-b border-slate-200">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="text-brand-blue font-semibold text-xs tracking-widest uppercase bg-sky-50 px-3 py-1 rounded-full border border-sky-100">Giải Đáp Thắc Mắc</span>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-navy-900 mt-2">Hỏi Đáp Thường Gặp (FAQ)</h2>
+                    <p class="text-slate-600 mt-2 text-sm sm:text-base">Tổng hợp câu hỏi và lời giải đáp minh bạch về quy chế và cuộc sống đại học.</p>
+                </div>
+
+                <div class="mb-8 max-w-md mx-auto">
+                    <div class="relative">
+                        <input type="text" id="faq-search-input" oninput="filterFaq()" placeholder="Tìm kiếm câu hỏi (vd: đăng ký môn, học phí...)" class="w-full text-xs px-4 py-3 pl-10 rounded-xl border border-slate-300 focus:outline-none focus:border-brand-blue shadow-sm">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    </div>
+                </div>
+
+                <div id="faq-container" class="space-y-4">
+                    <!-- JS Rendered -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: LIÊN HỆ & DANH BẠ HƯỚNG DẪN -->
+        <section id="contact" class="py-16 bg-slate-900 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid lg:grid-cols-12 gap-12">
+                    <div class="lg:col-span-6 space-y-6">
+                        <span class="text-brand-amber font-semibold text-xs tracking-widest uppercase bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">Danh Bạ Hỗ Trợ</span>
+                        <h2 class="font-heading text-3xl font-bold text-white">Cách Tìm Đúng Phòng Ban Khi Gặp Khó Khăn</h2>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Môi trường đại học phân chia trách nhiệm rõ ràng. Việc tìm đúng phòng ban sẽ giúp bạn giải quyết vướng mắc nhanh chóng nhất:
+                        </p>
+
+                        <div class="space-y-4">
+                            <div class="p-4 rounded-xl bg-slate-800 border border-slate-700 flex gap-4 items-start">
+                                <div class="w-10 h-10 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center shrink-0 font-bold">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                </div>
+                                <div class="text-xs">
+                                    <h4 class="font-bold text-white text-sm">Phòng Đào Tạo</h4>
+                                    <p class="text-slate-300 mt-1">Giải quyết: Đăng ký học phần, thời khóa biểu, điểm số, bảng điểm, hủy môn, hoãn thi, chứng nhận sinh viên.</p>
+                                </div>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-800 border border-slate-700 flex gap-4 items-start">
+                                <div class="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 font-bold">
+                                    <i class="fa-solid fa-user-shield"></i>
+                                </div>
+                                <div class="text-xs">
+                                    <h4 class="font-bold text-white text-sm">Phòng Công Tác Sinh Viên (CTSV)</h4>
+                                    <p class="text-slate-300 mt-1">Giải quyết: Thẻ sinh viên, chế độ chính sách, học bổng khuyến khích, miễn giảm học phí, nội/ngoại trú, rèn luyện.</p>
+                                </div>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-800 border border-slate-700 flex gap-4 items-start">
+                                <div class="w-10 h-10 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 font-bold">
+                                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                                </div>
+                                <div class="text-xs">
+                                    <h4 class="font-bold text-white text-sm">Phòng Kế Toán / Tài Chính</h4>
+                                    <p class="text-slate-300 mt-1">Giải quyết: Thu học phí, tra cứu nợ học phí, hoàn trả kinh phí, hóa đơn tài chính.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="lg:col-span-6 bg-slate-800 border border-slate-700 rounded-2xl p-6 sm:p-8">
+                        <h3 class="text-xl font-bold text-white mb-2">Gửi Thắc Mắc & Góp Ý</h3>
+                        <p class="text-xs text-slate-400 mb-6">
+                            ⚠️ <span class="font-semibold text-amber-400">Thông báo minh bạch:</span> Website chạy 100% trên giao diện người dùng (Frontend-only). Câu hỏi của bạn sẽ được mô phỏng tiếp nhận và phản hồi trên trình duyệt.
+                        </p>
+
+                        <form onsubmit="handleContactSubmit(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Họ và tên của bạn *</label>
+                                <input type="text" id="contact-name" required placeholder="Nguyễn Văn A" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-blue">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Email liên hệ *</label>
+                                <input type="email" id="contact-email" required placeholder="sinhvien@example.com" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-blue">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Trường ĐH quan tâm</label>
+                                <input type="text" id="contact-school" placeholder="VD: ĐH Bách Khoa, ĐH Kinh tế..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-blue">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Nội dung câu hỏi / Góp ý *</label>
+                                <textarea id="contact-message" rows="4" required placeholder="Nhập câu hỏi của bạn tại đây..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-blue"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-gradient-to-r from-brand-blue to-sky-600 hover:brightness-110 text-white font-semibold text-xs py-3 rounded-lg transition-all shadow-md">
+                                <i class="fa-solid fa-paper-plane mr-1.5"></i> Gửi Câu Hỏi
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-navy-950 text-slate-400 text-xs border-t border-slate-800 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div class="space-y-3 md:col-span-2">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-brand-blue flex items-center justify-center text-white font-bold">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <span class="font-heading text-xl font-bold text-white">CẨM NANG TÂN SINH VIÊN</span>
+                    </div>
+                    <p class="text-slate-400 text-xs leading-relaxed max-w-sm">
+                        Sản phẩm số sáng tạo phục vụ Thử thách Vibe Coding 2026. Hỗ trợ tân sinh viên Việt Nam vững vàng hòa nhập môi trường đại học.
+                    </p>
+                    <p class="text-[11px] text-slate-500">
+                        Đơn vị tổ chức: Bộ Giáo dục và Đào tạo & Đại học RMIT Việt Nam.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-white mb-3">Lối Truy Cập Nhanh</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#checklist" class="hover:text-white transition-colors">Checklist thủ tục nhập học</a></li>
+                        <li><a href="#budget" class="hover:text-white transition-colors">Công cụ tính chi phí sinh hoạt</a></li>
+                        <li><a href="#planner" class="hover:text-white transition-colors">Sổ quản lý deadline bài tập</a></li>
+                        <li><a href="#handbook" class="hover:text-white transition-colors">Tra cứu cẩm nang học vụ</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-white mb-3">Thông Tin Nộp Bài</h4>
+                    <ul class="space-y-1.5 text-slate-400">
+                        <li><i class="fa-solid fa-calendar mr-1.5 text-brand-amber"></i> Hạn nộp: 31/10/2026</li>
+                        <li><i class="fa-solid fa-trophy mr-1.5 text-brand-amber"></i> Lễ tổng kết: 07/11/2026</li>
+                        <li><i class="fa-solid fa-code mr-1.5 text-sky-400"></i> Kiến trúc: Frontend-only</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800/80 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
+                <p>© 2026 Cẩm Nang Tân Sinh Viên. Xây dựng bằng phương pháp Vibe Coding.</p>
+                <p>Designed for Vietnamese Freshmen</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- GLOBAL SEARCH MODAL -->
+    <div id="search-modal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
+            <div class="p-4 border-b border-slate-800 flex items-center gap-3">
+                <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+                <input type="text" id="global-search-input" oninput="handleGlobalSearch(this.value)" placeholder="Nhập từ khóa tìm kiếm (vd: tín chỉ, ký túc xá, bảo hiểm...)" class="w-full bg-transparent text-sm text-white focus:outline-none">
+                <button onclick="closeSearchModal()" class="text-slate-400 hover:text-white text-xs bg-slate-800 px-2 py-1 rounded">ESC</button>
+            </div>
+            <div id="global-search-results" class="p-4 overflow-y-auto space-y-3 flex-grow text-xs text-slate-300">
+                <p class="text-slate-500 text-center py-8">Hãy nhập từ khóa để tìm kiếm bài viết và câu hỏi FAQ...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ARTICLE DETAIL MODAL -->
+    <div id="article-modal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white text-slate-800 w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+                <span id="modal-article-category" class="text-xs font-bold uppercase text-brand-blue bg-sky-100 px-2.5 py-1 rounded">Danh mục</span>
+                <button onclick="closeArticleModal()" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-4">
+                <h2 id="modal-article-title" class="font-heading text-2xl font-bold text-navy-900">Tiêu đề bài viết</h2>
+                <div id="modal-article-body" class="text-sm text-slate-700 leading-relaxed space-y-3">
+                    <!-- Dynamic Body -->
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500">
+                <span>Nguồn tham khảo: Quy chế Đào tạo Đại học (Bộ GD&ĐT)</span>
+                <button onclick="closeArticleModal()" class="px-4 py-2 bg-navy-900 text-white rounded-lg font-semibold">Đóng bài viết</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS SCRIPTS -->
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
